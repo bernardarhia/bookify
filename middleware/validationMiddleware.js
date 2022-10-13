@@ -1,6 +1,4 @@
-const Joi = require("joi");
-
-function validationMiddleware(schema) {
+const validationMiddleware = (schema)=> {
   return async (req, res, next) => {
     const validationsOptions = {
       abortEarly: false,

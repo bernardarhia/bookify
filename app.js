@@ -11,7 +11,7 @@ class App {
     this.express = express();
     this.port = port;
 
-    this.initializeDatabaseConnection();
+    // this.initializeDatabaseConnection();
     this.initializeMiddleware();
     this.initializeControllers(controllers);
     this.initializeErrorHandling();
@@ -28,7 +28,7 @@ class App {
 
   initializeControllers(controllers) {
     controllers.forEach((controller) => {
-      this.express.use("/api", controller.router);
+      this.express.use(`/api/${controller?.subRoute}`, controller.router);
     });
   }
   initializeErrorHandling() {
@@ -38,7 +38,7 @@ class App {
   initializeDatabaseConnection() {
     // const {MONGO_USER, MONGO_PASSWORD,MONGO_PATH} = process.env
     // mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`)
-    mongoose.connect(`mongodb://localhost:27017`);
+    // mongoose.connect(`mongodb://localhost:/bookify`);
   }
 
   listen() {

@@ -1,33 +1,41 @@
-import prompt from "prompt";
+const prompt = require("prompt");
+const UserModel = require("./models/User");
+const dbConnect = require("./utils/dbConnection");
 
-
-const adminModel =  [
+const adminModel = [
   {
-    name:"username",
-    description: 'Enter your username',
+    name: "username",
+    description: "Enter your username",
     validator: /^[a-zA-Z\s-]+$/,
-    warning: 'Username must be only letters, spaces, or dashes',
-    required:true,
-    type:"string",
+    warning: "Username must be only letters, spaces, or dashes",
+    required: true,
+    type: "string",
   },
   {
-    name:"password",
-    description: 'Enter your password',
+    name: "password",
+    description: "Enter your password",
     hidden: true,
-    required : true,
-    replace: "*"
-  }
+    required: true,
+    replace: "*",
+  },
 ];
+dbConnect();
 prompt.start();
 
-prompt.get(adminModel, function (err, result) {
+prompt.get(adminModel, async (err, result) => {
   if (err) {
     return onErr(err);
   }
 
-  const {username, password} = result;
-
-
+  try {
+    const { username, password } = result;
+    const role = "admin";
+    const created = await UserModel.create({ username, password, role });
+    console.log(created);
+  } catch (error) {
+    console.log({ error : error.message });
+  }
+  process.exit(0);
 });
 
 function onErr(err) {

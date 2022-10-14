@@ -1,17 +1,17 @@
 const User = require("../../models/User");
 const httpException = require("../../utils/exceptions/httpException");
 const validationMiddleware = require("../../middleware/validationMiddleware");
-const {authenticationSchema} = require("./validation");
+const { authenticationSchema } = require("./validation");
 const UserService = require("./service");
 const { Router } = require("express");
 
 class UserController {
   constructor() {
-      this.subRoute = "users";
-      this.paths ={
-        CREATE:"/create",
-        LOGIN:"/login"
-      }
+    this.subRoute = "users";
+    this.paths = {
+      CREATE: "/register",
+      LOGIN: "/login",
+    };
     this.router = new Router();
     this.initializeRoutes();
     this.UserService = new UserService();
@@ -20,7 +20,7 @@ class UserController {
     this.router.post(
       `${this.paths.CREATE}`,
       validationMiddleware(authenticationSchema),
-      this.create
+      this.register
     );
     this.router.post(
       `${this.paths.LOGIN}`,
@@ -29,13 +29,17 @@ class UserController {
     );
   }
 
-  // Create user method
-  create = async (req, res, next) => {
+  // register user method
+  register = async (req, res, next) => {
     try {
       const { username, password } = req.body;
-      const user = await this.UserService.create(username, password);
+      const token = await this.UserService.register(username, password);
 
-      res.status(201).json({ user });
+      res.cookie("auth_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+       expire:36000 * Date.now()
+      } ).status(200).json({ token });
     } catch (error) {
       next(new httpException(400, error.message));
     }
@@ -45,13 +49,20 @@ class UserController {
   login = async (req, res, next) => {
     try {
       const { username, password } = req.body;
-      const user = await this.UserService.login(username);
+      const token = await this.UserService.login(username, password);
 
-      res.status(201).json({ user });
+      res.cookie("auth_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: "1d"
+      } ).status(200).json({ token });
     } catch (error) {
       next(new httpException(400, error.message));
     }
   };
+  logout = async(req, res, next) =>{
+      
+  }
 }
 
 module.exports = UserController;

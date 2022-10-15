@@ -1,7 +1,5 @@
-const User = require("../../models/User");
 const httpException = require("../../utils/exceptions/httpException");
-const validationMiddleware = require("../../middleware/validationMiddleware");
-const { authenticationSchema } = require("./validation");
+const { userValidationMiddleware, authenticationSchema } = require("./validation");
 const UserService = require("./service");
 const { Router } = require("express");
 
@@ -19,12 +17,12 @@ class UserController {
   initializeRoutes() {
     this.router.post(
       `${this.paths.CREATE}`,
-      validationMiddleware(authenticationSchema),
+      userValidationMiddleware(authenticationSchema),
       this.register
     );
     this.router.post(
       `${this.paths.LOGIN}`,
-      validationMiddleware(authenticationSchema),
+      userValidationMiddleware(authenticationSchema),
       this.login
     );
   }
@@ -54,7 +52,7 @@ class UserController {
       res.cookie("auth_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        maxAge: "1d"
+        expire:36000 * Date.now()
       } ).status(200).json({ token });
     } catch (error) {
       next(new httpException(400, error.message));

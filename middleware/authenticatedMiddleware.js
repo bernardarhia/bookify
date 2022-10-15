@@ -10,11 +10,11 @@ const authenticatedMiddleware = async (req, res, next) => {
 
   try {
     const payload = await verifyToken(accessToken);
-    if (!payload) return next(new HttpException(401, "Unauthorized"));
+    if (!payload) return next(new HttpException(401, "Unauthorized 1"));
 
     const user = await User.findById(payload.id).select("-password").exec();
 
-    if (!user) return next(new HttpException(401, "Unauthorized"));
+    if (!user) return next(new HttpException(401, "Unauthorized 2"));
     req.user = user;
 
      next();

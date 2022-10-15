@@ -1,13 +1,89 @@
-class BookService{
-    // Create a new post
-    create = async (body)=>{
-        try {
-         
-            return {body}
-        } catch (error) {
-            throw new Error("Unable to create user")
-        }
+const Book = require("../../models/Book");
+
+class BookService {
+  // Create a new book
+  createBook = async (body, author) => {
+    const { title, quantity, price, description } = body;
+    const book = await Book.create({
+      title,
+      quantity,
+      price,
+      description,
+      author,
+    });
+    try {
+      return book;
+    } catch (error) {
+      throw new Error("Unable to create book");
     }
+  };
+  getAllBooks = async (userRole, userId) => {
+    let books = null;
+    if (userRole == "user") {
+      books = await Book.find();
+    } else {
+      books = await Book.find({ author: userId }).select("-author").exec();
+    }
+    try {
+      return books;
+    } catch (error) {
+      throw new Error("Books not found");
+    }
+  };
+  getSingleBook = async (bookId, userRole, userId) => {
+    let book = null;
+    if (userRole == "user") {
+      book = await Book.findById(bookId);
+    } else {
+      book = await Book.findOne({ _id: bookId, author: userId })
+        .select("-author")
+        .exec();
+    }
+    try {
+      return book;
+    } catch (error) {
+      throw new Error("Unable to delete book");
+    }
+  };
+  deleteSingleBook = async (bookId, userId) => {
+    try {
+      await Book.findOneAndDelete({ _id: bookId, author: userId });
+      const books = await Book.find({ author: userId });
+      return books;
+    } catch (error) {
+      throw new Error("Book not found");
+    }
+  };
+  deleteAllBooks = async (userId) => {
+    try {
+      await Book.deleteMany({ author: userId });
+      return [];
+    } catch (error) {
+      throw new Error("Unable to delete books");
+    }
+  };
+
+
+  editBook = async (body,bookId, author) => {
+    const { title, quantity, price, description } = body;
+    const book = await Book.findOneAndUpdate({
+      _id: bookId,
+      author
+    },{
+      title,
+      quantity,
+      price,
+      description,
+      author,
+    }, {
+      new:true
+    }).select("-author").exec();
+    try {
+      return book;
+    } catch (error) {
+      throw new Error("Unable to edit book");
+    }
+  };
 }
 
 module.exports = BookService;

@@ -14,6 +14,7 @@ class BookController {
       DELETE: "/delete/:id",
       DELETE_ALL: "/all",
       UPDATE: "/update/:id",
+      SEARCH : "/search"
     };
     this.router = new Router();
     this.initializeRoutes();
@@ -55,6 +56,11 @@ class BookController {
       isAdminMiddleware,
       bookValidationMiddleware(bookSchema),
       this.editBook
+    );
+    this.router.post(
+      `${this.paths.SEARCH}`,
+      authenticatedMiddleware,
+      this.searchBook
     );
   }
 
@@ -134,6 +140,19 @@ class BookController {
       next(new httpException(400, error.message));
     }
   };
+
+  // SEARCH REQUESTS
+  searchBook = async(req, res, next)=>{
+    try {
+      const {query} = req.body
+      if(!query || query.length < 1)return next(new httpException(400, "Type a keyword to search for"))
+      const books = await this.BookService.searchBook(query);
+
+      res.status(200).json({books});
+    } catch (error) {
+      next(new httpException(400, error.message));
+    }
+  }
 }
 
 module.exports = BookController;

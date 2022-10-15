@@ -57,7 +57,7 @@ class BookService {
   deleteAllBooks = async (userId) => {
     try {
       await Book.deleteMany({ author: userId });
-      return [];
+      return await Book.find({author:userId});
     } catch (error) {
       throw new Error("Unable to delete books");
     }
@@ -82,6 +82,22 @@ class BookService {
       return book;
     } catch (error) {
       throw new Error("Unable to edit book");
+    }
+  };
+
+  searchBook = async (query) => {
+    try {
+      const queryStrings = query.split(" ")
+      let allQueries =[]
+      queryStrings.forEach(element => {
+          allQueries.push({title : {$regex : String(element), $options : "i"}})
+      });
+   
+      const allBooks = await Book.find({ $or : allQueries})
+
+return allBooks;
+    } catch (error) {
+      throw new Error(error);
     }
   };
 }

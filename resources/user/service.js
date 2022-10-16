@@ -22,7 +22,7 @@ class UserService {
       if (!user) throw new Error("wrong username/password combination");
 
       //   validate the encrypted password again the textual password enter by the user
-      if (await user.isValidPassword(password)) return createToken(user);
+      if (await user.isValidPassword(password)) return {token: createToken(user), user};
       throw new Error("wrong username/password combination");
     } catch (error) {
       throw new Error(error.message);

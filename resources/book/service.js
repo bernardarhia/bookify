@@ -20,7 +20,7 @@ class BookService {
   getAllBooks = async (userRole, userId) => {
     let books = null;
     if (userRole == "user") {
-      books = await Book.find();
+      books = await Book.find().populate("author", "username -_id").select("-__v");
     } else {
       books = await Book.find({ author: userId }).select("-author").exec();
     }

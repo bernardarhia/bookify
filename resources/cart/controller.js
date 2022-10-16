@@ -1,7 +1,7 @@
 const httpException = require("../../utils/exceptions/httpException");
 const CartService = require("./service");
 const authenticatedMiddleware = require("../../middleware/authenticatedMiddleware");
-const {cartSchema, cartValidationMiddleware} = require("./validation")
+const {cartSchema, cartValidationMiddleware, checkoutMiddleware,checkoutSchema} = require("./validation")
 const { Router } = require("express");
 
 class CartController {
@@ -11,7 +11,8 @@ class CartController {
       CREATE: "/add",
       GET:"/all",
       DELETE:"/delete/item",
-      CLEAR:"/delete/all"
+      CLEAR:"/delete/all",
+      CHECKOUT:"/checkout"
     };
 
     this.router = new Router();
@@ -24,6 +25,7 @@ class CartController {
     this.router.get(`${this.paths.GET}`,authenticatedMiddleware, this.getCartItems);
     this.router.delete(`${this.paths.DELETE}`,authenticatedMiddleware, this.removeItemFromCart);
     this.router.delete(`${this.paths.CLEAR}`,authenticatedMiddleware, this.clearCart);
+    this.router.post(`${this.paths.CHECKOUT}`,authenticatedMiddleware, this.checkoutCart);
   }
 
   /*
@@ -72,7 +74,17 @@ class CartController {
       next(new httpException(400, error.message));
     }
   };
-  checkOutCart = async (req, res, next) => {
+  checkoutCart = async (req, res, next) => {
+    try {
+      const { _id: userId } = req.user;
+      const checkout = await this.CartService.checkoutCart(req.body,userId);
+return checkout
+    } catch (error) {
+      next(new httpException(400, error.message));
+    }
+  };
+
+  getCheckoutItems = async (req, res, next) => {
     try {
       // return { body };
     } catch (error) {

@@ -1,5 +1,6 @@
 const Cart = require("../../models/Cart");
 const Book = require("../../models/Book");
+const Checkout = require("../../models/Checkout");
 class CartService {
   // TODO create new cart service to handle cart item addition, deletion, clearing
   addItemToCart = async (body, userId) => {
@@ -69,9 +70,19 @@ class CartService {
     }
   };
 
-  checkOutCart = async (body, userId) => {
+  checkoutCart = async (body, userId) => {
+    const {products, shipping, payment} = body;
+    const orderId = Date.now()
     try {
-      return { body };
+      const checkout = await Checkout.create({
+        userId,
+        products,
+        shipping,
+        payment,
+        orderId
+
+      });
+      return { checkout };
     } catch (error) {
       throw new Error(error.message);
     }

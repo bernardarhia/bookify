@@ -49,11 +49,12 @@ class UserController {
       const { username, password } = req.body;
       const token = await this.UserService.login(username, password);
 
-      res.cookie("auth_token", token, {
+      console.log(token);
+      res.cookie("auth_token", "12234", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         expire:36000 * Date.now()
-      } ).status(200).json({ token });
+      } ).status(200).json(token);
     } catch (error) {
       next(new httpException(400, error.message));
     }

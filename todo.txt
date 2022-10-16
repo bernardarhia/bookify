@@ -1,0 +1,2 @@
+//TODO add is published boolean to book schema
+//TODO add image and image upload to data

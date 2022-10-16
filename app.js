@@ -9,6 +9,7 @@ import helmet from "helmet";
 import credentials from "./config/credentials.js"
 import corsOptions from "./config/corsOptions.js"
 import dotenv from "dotenv"
+dotenv.config()
 
 export class App {
   constructor(controllers, port) {
@@ -23,12 +24,9 @@ export class App {
         // Handle options credentials check - before CORS!
     // and fetch cookies credentials requirement
     
+    this.express.use(credentials);
     // Cross Origin Resource Sharing
-    this.express.use(cors({
-      credentials:true,
-      origin:"http://localhost:3000"
-    }));
-    // this.express.use(credentials);
+    this.express.use(cors(corsOptions));
   }
 
   initializeMiddleware = () => {

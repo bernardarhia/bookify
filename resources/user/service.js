@@ -1,5 +1,5 @@
 import User from "../../models/User.js";
-import { createToken } from "../../utils/token.js";
+import { createRefreshToken, createToken } from "../../utils/token.js";
 
 class UserService {
   // Create a new post
@@ -9,7 +9,11 @@ class UserService {
       const user = await User.create({ username, password, role });
 
       const accessToken = createToken(user);
-      return accessToken;
+      const refreshToken = createRefreshToken(user)
+      
+      await User.findOneAndUpdate({username}, {refreshToken})
+      
+      return {accessToken, refreshToken, role:user.role};
     } catch (error) {
       throw new Error(error.message);
     }
@@ -22,16 +26,21 @@ class UserService {
       if (!user) throw new Error("wrong username/password combination");
 
       //   validate the encrypted password again the textual password enter by the user
-      if (await user.isValidPassword(password)) return {token: createToken(user), user};
+      if (await user.isValidPassword(password)) {
+
+        const accessToken = createToken(user);
+        const refreshToken = createRefreshToken(user)
+
+        await User.findOneAndUpdate({username}, {refreshToken})
+
+        return {accessToken, refreshToken, role:user.role}
+      };
       throw new Error("wrong username/password combination");
     } catch (error) {
       throw new Error(error.message);
     }
 
   };
-  refreshToken = async (username, password) => {
-    
-  }
 }
 
 export default UserService;

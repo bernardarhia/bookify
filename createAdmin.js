@@ -32,6 +32,7 @@ prompt.get(adminModel, async (err, result) => {
     const role = "admin";
     const created = await UserModel.create({ username, password, role });
     console.log(created);
+    if(created) console.log({username, id:created._id})
   } catch (error) {
     console.log({ error : error.message });
   }

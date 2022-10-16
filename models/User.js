@@ -11,7 +11,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    refresh_token:String
+    refreshToken:String
   },
   { timestamps: true }
 );
@@ -19,6 +19,7 @@ const userSchema = new Schema(
 // Hash user password before save
 userSchema.pre("save", async function (next) {
   const userExists = await User.findOne({ username: this.username });
+
   if (userExists) throw new Error("User already exists");
 
   if (!this.isModified("password")) return next();

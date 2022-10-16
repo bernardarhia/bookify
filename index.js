@@ -1,7 +1,7 @@
-const { App } = require("./app");
-const UserController = require("./resources/user/controller");
-const BookController = require("./resources/book/controller");
-const CartController = require("./resources/cart/controller");
+import { App } from "./app.js";
+import UserController from "./resources/user/controller.js";
+import BookController from "./resources/book/controller.js";
+import CartController from "./resources/cart/controller.js";
 const app = new App(
   [new UserController(), new BookController(), new CartController()],
   Number(process.env.PORT) || 5000

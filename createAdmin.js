@@ -1,6 +1,6 @@
-const prompt = require("prompt");
-const UserModel = require("./models/User");
-const dbConnect = require("./utils/dbConnection");
+import prompt from "prompt";
+import UserModel from "./models/User.js";
+import dbConnect from "./utils/dbConnection.js";
 
 const adminModel = [
   {

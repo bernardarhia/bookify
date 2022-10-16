@@ -1,8 +1,8 @@
-const httpException = require("../../utils/exceptions/httpException");
-const CartService = require("./service");
-const authenticatedMiddleware = require("../../middleware/authenticatedMiddleware");
-const {cartSchema, cartValidationMiddleware, checkoutMiddleware,checkoutSchema} = require("./validation")
-const { Router } = require("express");
+import httpException from "../../utils/exceptions/httpException.js";
+import CartService from "./service.js";
+import authenticatedMiddleware from "../../middleware/authenticatedMiddleware.js";
+import {cartSchema, cartValidationMiddleware, checkoutMiddleware,checkoutSchema} from "./validation.js"
+import { Router } from "express";
 
 class CartController {
   constructor() {
@@ -93,4 +93,4 @@ return checkout
   };
 }
 
-module.exports = CartController;
+export default CartController;

@@ -1,4 +1,4 @@
-const Joi = require("joi");
+import Joi from "joi";
 
 const validationsOptions = {
   abortEarly: false,
@@ -70,7 +70,7 @@ const checkoutSchema = Joi.object({
     required: true,
   },
 });
-module.exports = {
+export {
   cartSchema,
   cartValidationMiddleware,
   checkoutMiddleware,

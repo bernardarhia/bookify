@@ -1,4 +1,4 @@
-const Joi = require("joi");
+import Joi from "joi";
 
 const bookSchema = Joi.object({
   title: Joi.string().min(3).required(),
@@ -28,4 +28,4 @@ const bookValidationMiddleware = (schema) => {
     }
   };
 };
-module.exports = { bookValidationMiddleware, bookSchema };
+export { bookValidationMiddleware, bookSchema };

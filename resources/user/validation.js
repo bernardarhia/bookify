@@ -1,4 +1,4 @@
-const Joi = require("joi")
+import Joi from "joi"
 
 const authenticationSchema = Joi.object({
     username:Joi.string().min(3).required(),
@@ -26,7 +26,6 @@ const userValidationMiddleware = (schema) => {
       }
     };
   };
+
   
-  module.exports = userValidationMiddleware;
-  
-module.exports = {userValidationMiddleware, authenticationSchema}
+export {userValidationMiddleware, authenticationSchema}

@@ -1,9 +1,9 @@
-const httpException = require("../../utils/exceptions/httpException");
-const BookService = require("./service");
-const { Router } = require("express");
-const isAdminMiddleware = require("../../middleware/isAdminMiddleware");
-const authenticatedMiddleware = require("../../middleware/authenticatedMiddleware");
-const { bookValidationMiddleware, bookSchema } = require("./validation");
+import httpException from "../../utils/exceptions/httpException.js";
+import BookService from "./service.js";
+import { Router } from "express";
+import isAdminMiddleware from "../../middleware/isAdminMiddleware.js";
+import authenticatedMiddleware from "../../middleware/authenticatedMiddleware.js";
+import { bookValidationMiddleware, bookSchema } from "./validation.js";
 class BookController {
   constructor() {
     this.subRoute = "books";
@@ -155,4 +155,4 @@ class BookController {
   }
 }
 
-module.exports = BookController;
+export default BookController;

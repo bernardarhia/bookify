@@ -8,6 +8,7 @@
     "create-admin": "node createAdmin.js",
     "start": "node index"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",

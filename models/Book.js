@@ -1,4 +1,4 @@
-const { Schema, model, mongoose } = require("mongoose");
+import { Schema, model, mongoose } from "mongoose";
 const bookModel = new Schema(
   {
     title: {
@@ -33,9 +33,4 @@ bookModel.pre("save", async function (next) {
 });
 
 const Book = model("Book", bookModel);
-module.exports = Book;
-
-/**
- *
- * title, author, price, description
- */
+export default Book

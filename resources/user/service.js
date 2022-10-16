@@ -1,5 +1,5 @@
-const User = require("../../models/User");
-const { createToken } = require("../../utils/token");
+import User from "../../models/User.js";
+import { createToken } from "../../utils/token.js";
 
 class UserService {
   // Create a new post
@@ -27,7 +27,11 @@ class UserService {
     } catch (error) {
       throw new Error(error.message);
     }
+
   };
+  refreshToken = async (username, password) => {
+    
+  }
 }
 
-module.exports = UserService;
+export default UserService;

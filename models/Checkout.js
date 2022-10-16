@@ -1,4 +1,4 @@
-const { Schema, model, mongoose } = require("mongoose");
+import { Schema, model, mongoose }from "mongoose";
 const checkoutModel = new Schema(
   {
     userId: {
@@ -28,7 +28,7 @@ const checkoutModel = new Schema(
 );
 
 const Checkout = model("Checkout", checkoutModel);
-module.exports = Checkout;
+export default Checkout;
 // , shipping: {
 //   name: "Joe Dow"
 // , address: "Some street 1, NY 11223"

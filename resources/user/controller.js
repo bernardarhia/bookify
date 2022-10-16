@@ -1,7 +1,7 @@
-const httpException = require("../../utils/exceptions/httpException");
-const { userValidationMiddleware, authenticationSchema } = require("./validation");
-const UserService = require("./service");
-const { Router } = require("express");
+import httpException from "../../utils/exceptions/httpException.js";
+import { userValidationMiddleware, authenticationSchema } from "./validation.js";
+import UserService from "./service.js";
+import { Router } from "express";
 
 class UserController {
   constructor() {
@@ -49,7 +49,8 @@ class UserController {
       const { username, password } = req.body;
       const token = await this.UserService.login(username, password);
 
-      console.log(token);
+      res.header("Access-Control-Allow-Origin","http://localhost:3000");
+
       res.cookie("auth_token", "12234", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -64,4 +65,4 @@ class UserController {
   }
 }
 
-module.exports = UserController;
+export default UserController;

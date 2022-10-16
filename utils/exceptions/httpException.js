@@ -1,4 +1,4 @@
-class HttpException extends Error{
+class httpException extends Error{
 
     constructor(status, message){
         super(message)
@@ -7,4 +7,4 @@ class HttpException extends Error{
     }
 }
 
-module.exports = HttpException;
+export default httpException;

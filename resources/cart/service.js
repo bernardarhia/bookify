@@ -1,6 +1,6 @@
-const Cart = require("../../models/Cart");
-const Book = require("../../models/Book");
-const Checkout = require("../../models/Checkout");
+import Cart from "../../models/Cart.js";
+import Book from "../../models/Book.js";
+import Checkout from "../../models/Checkout.js";
 class CartService {
   // TODO create new cart service to handle cart item addition, deletion, clearing
   addItemToCart = async (body, userId) => {
@@ -89,4 +89,4 @@ class CartService {
   };
 }
 
-module.exports = CartService;
+export default CartService;

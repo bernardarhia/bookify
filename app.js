@@ -1,16 +1,16 @@
-const express = require("express");
-const dbConnect = require("./utils/dbConnection");
-const compression = require("compression");
-const cors = require("cors");
-const morgan = require("morgan");
-const cookieParser = require("cookie-parser");
-const ErrorMiddleware = require("./middleware/errorMiddleware");
-const helmet = require("helmet");
-const credentials = require("./config/credentials")
-const corsOptions = require("./config/corsOptions")
-require("dotenv").config();
+import express from "express";
+import dbConnect from "./utils/dbConnection.js";
+import compression from "compression";
+import cors from "cors";
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import ErrorMiddleware from "./middleware/errorMiddleware.js";
+import helmet from "helmet";
+import credentials from "./config/credentials.js"
+import corsOptions from "./config/corsOptions.js"
+import dotenv from "dotenv"
 
-class App {
+export class App {
   constructor(controllers, port) {
     this.express = express();
     this.port = port;
@@ -19,6 +19,16 @@ class App {
     this.initializeMiddleware();
     this.initializeControllers(controllers);
     this.initializeErrorHandling();
+
+        // Handle options credentials check - before CORS!
+    // and fetch cookies credentials requirement
+    
+    // Cross Origin Resource Sharing
+    this.express.use(cors({
+      credentials:true,
+      origin:"http://localhost:3000"
+    }));
+    // this.express.use(credentials);
   }
 
   initializeMiddleware = () => {
@@ -30,12 +40,7 @@ class App {
     this.express.use(compression());
     this.express.use(cookieParser());
 
-    // Handle options credentials check - before CORS!
-    // and fetch cookies credentials requirement
-    this.express.use(credentials);
 
-    // Cross Origin Resource Sharing
-    this.express.use(cors(corsOptions));
   };
 
   initializeControllers = (controllers) => {
@@ -57,5 +62,3 @@ class App {
     );
   }
 }
-
-module.exports = { App };

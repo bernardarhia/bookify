@@ -1,4 +1,4 @@
-const Book = require("../../models/Book");
+import Book  from "../../models/Book.js";
 
 class BookService {
   // Create a new book
@@ -101,5 +101,4 @@ return allBooks;
     }
   };
 }
-
-module.exports = BookService;
+export default BookService;

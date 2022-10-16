@@ -1,4 +1,4 @@
-const HttpException = require("../utils/exceptions/httpException");
+import HttpException from "../utils/exceptions/httpException.js";
 
 const isAdminMiddleware = async (req, res, next) => {
   const { role } = req.user;
@@ -10,5 +10,4 @@ const isAdminMiddleware = async (req, res, next) => {
     return next(new HttpException(402, error.message));
   }
 };
-
-module.exports = isAdminMiddleware;
+export default isAdminMiddleware;

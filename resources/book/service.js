@@ -4,6 +4,9 @@ class BookService {
   // Create a new book
   createBook = async (body, author) => {
     const { title, quantity, price, description } = body;
+    const bookExists = await Book.findOne({ title: this.title, author });
+    
+    if(bookExists)throw new Error("Book already exists") 
     const book = await Book.create({
       title,
       quantity,

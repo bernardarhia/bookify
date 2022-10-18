@@ -26,11 +26,12 @@ const bookModel = new Schema(
   { timestamps: true }
 );
 
-bookModel.pre("save", async function (next) {
-  const bookExists = await Book.findOne({ title: this.title });
-  if (bookExists) throw new Error("Book already exists");
-  next();
-});
+// bookModel.pre("save", async function (next) {
+
+//   const bookExists = await Book.findOne({ title: this.title });
+//   if (bookExists) throw new Error("Book already exists");
+//   next();
+// });
 
 const Book = model("Book", bookModel);
 export default Book

@@ -13,7 +13,7 @@ class UserService {
       
       await User.findOneAndUpdate({username}, {refreshToken})
       
-      return {accessToken, refreshToken, role:user.role};
+      return {accessToken, refreshToken, role:user.role, username:user.username}
     } catch (error) {
       throw new Error(error.message);
     }
@@ -33,7 +33,7 @@ class UserService {
 
         await User.findOneAndUpdate({username}, {refreshToken})
 
-        return {accessToken, refreshToken, role:user.role}
+        return {accessToken, refreshToken, role:user.role, username:user.username}
       };
       throw new Error("wrong username/password combination");
     } catch (error) {

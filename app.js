@@ -6,10 +6,8 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import ErrorMiddleware from "./middleware/errorMiddleware.js";
 import helmet from "helmet";
-import credentials from "./config/credentials.js"
-import corsOptions from "./config/corsOptions.js"
-import dotenv from "dotenv"
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config();
 
 export class App {
   constructor(controllers, port) {
@@ -20,25 +18,21 @@ export class App {
     this.initializeMiddleware();
     this.initializeControllers(controllers);
     this.initializeErrorHandling();
-
-        // Handle options credentials check - before CORS!
-    // and fetch cookies credentials requirement
-    
-    this.express.use(credentials);
-    // Cross Origin Resource Sharing
-    this.express.use(cors(corsOptions));
   }
 
   initializeMiddleware = () => {
     this.express.use(helmet());
-    this.express.use(cors());
+    this.express.use(cors(
+      {
+        origin:"http://localhost:3000",
+        credentials:true,
+      }
+    ));
     this.express.use(morgan("dev"));
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: false }));
     this.express.use(compression());
     this.express.use(cookieParser());
-
-
   };
 
   initializeControllers = (controllers) => {

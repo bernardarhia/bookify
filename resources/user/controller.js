@@ -90,18 +90,19 @@ class UserController {
       // check if refresh token is found in the database
       const foundUser = await User.findOne({ refreshToken });
       if (!foundUser) {
-        return res.clearCookie("auth_token").status(200);
+        return res.clearCookie("auth_token").status(200).send();
       }
 
       // delete refresh token from user's model
-      const updated = await User.findOneAndUpdate(
+      await User.findOneAndUpdate(
         { username: foundUser.username },
         { refreshToken: "" },
         { new: true }
       );
-      return res.clearCookie("auth_token").status(200);
+
+      return res.clearCookie("auth_token").status(200).send();
     } catch (error) {
-      return new httpException(400, "Bad request");
+     next(new httpException(400, "Bad request"));
     }
   };
 
@@ -126,7 +127,7 @@ class UserController {
           role: user.role,
         },
         process.env.JWT_SECRET,
-        { expiresIn: "20s" }
+        { expiresIn: "1d" }
       );
       res.json({ role: user.role, accessToken, user: payload.name });
     });

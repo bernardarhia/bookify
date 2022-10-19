@@ -1,7 +1,12 @@
 import httpException from "../../utils/exceptions/httpException.js";
 import CartService from "./service.js";
 import authenticatedMiddleware from "../../middleware/authenticatedMiddleware.js";
-import {cartSchema, cartValidationMiddleware, checkoutMiddleware,checkoutSchema} from "./validation.js"
+import {
+  cartSchema,
+  cartValidationMiddleware,
+  checkoutMiddleware,
+  checkoutSchema,
+} from "./validation.js";
 import { Router } from "express";
 
 class CartController {
@@ -9,10 +14,11 @@ class CartController {
     this.subRoute = "cart";
     this.paths = {
       CREATE: "/add",
-      GET:"/all",
-      DELETE:"/delete/item",
-      CLEAR:"/delete/all",
-      CHECKOUT:"/checkout"
+      GET: "/all",
+      DELETE: "/delete/item",
+      CLEAR: "/delete/all",
+      CHECKOUT: "/checkout",
+      CHECKOUT_ITEMS:"/checkout/all"
     };
 
     this.router = new Router();
@@ -21,11 +27,37 @@ class CartController {
   }
 
   initializeRoutes() {
-    this.router.post(`${this.paths.CREATE}`,authenticatedMiddleware, cartValidationMiddleware(cartSchema), this.addItemToCart);
-    this.router.get(`${this.paths.GET}`,authenticatedMiddleware, this.getCartItems);
-    this.router.delete(`${this.paths.DELETE}`,authenticatedMiddleware, this.removeItemFromCart);
-    this.router.delete(`${this.paths.CLEAR}`,authenticatedMiddleware, this.clearCart);
-    this.router.post(`${this.paths.CHECKOUT}`,authenticatedMiddleware, this.checkoutCart);
+    this.router.post(
+      `${this.paths.CREATE}`,
+      authenticatedMiddleware,
+      cartValidationMiddleware(cartSchema),
+      this.addItemToCart
+    );
+    this.router.get(
+      `${this.paths.GET}`,
+      authenticatedMiddleware,
+      this.getCartItems
+    );
+    this.router.delete(
+      `${this.paths.DELETE}`,
+      authenticatedMiddleware,
+      this.removeItemFromCart
+    );
+    this.router.delete(
+      `${this.paths.CLEAR}`,
+      authenticatedMiddleware,
+      this.clearCart
+    );
+    this.router.post(
+      `${this.paths.CHECKOUT}`,
+      authenticatedMiddleware,
+      this.checkoutCart
+    );
+    this.router.get(
+      `${this.paths.CHECKOUT_ITEMS}`,
+      authenticatedMiddleware,
+      this.getCheckoutItems
+    );
   }
 
   /*
@@ -43,7 +75,7 @@ class CartController {
       next(new httpException(400, error.message));
     }
   };
-  getCartItems = async(req, res, next) =>{
+  getCartItems = async (req, res, next) => {
     try {
       const { _id: userId } = req.user;
       const cart = await this.CartService.getCartItems(userId);
@@ -52,7 +84,7 @@ class CartController {
     } catch (error) {
       next(new httpException(400, error.message));
     }
-  }
+  };
   removeItemFromCart = async (req, res, next) => {
     try {
       const { cartId } = req.body;
@@ -77,8 +109,10 @@ class CartController {
   checkoutCart = async (req, res, next) => {
     try {
       const { _id: userId } = req.user;
-      const checkout = await this.CartService.checkoutCart(req.body,userId);
-return checkout
+      const checkout = await this.CartService.checkoutCart(req.body, userId);
+
+      return res.status(200).send();
+
     } catch (error) {
       next(new httpException(400, error.message));
     }
@@ -86,7 +120,9 @@ return checkout
 
   getCheckoutItems = async (req, res, next) => {
     try {
-      // return { body };
+      const { _id: userId } = req.user;
+      const checkoutItems = await this.CartService.getCheckoutItems(userId)
+      res.status(200).json( checkoutItems );
     } catch (error) {
       next(new httpException(400, error.message));
     }

@@ -1,4 +1,4 @@
-import { Schema, model, mongoose }from "mongoose";
+import { Schema, model, mongoose } from "mongoose";
 const checkoutModel = new Schema(
   {
     userId: {
@@ -10,21 +10,18 @@ const checkoutModel = new Schema(
       type: String,
       required: true,
     },
-    products:{
-      type:Array,
-      required:true
+    products: {
+      type: [],
+      required: true,
     },
-    shipping:{
-      type:Object,
-      required:true
+    price: {
+      type: Number,
+      required: true,
     },
-    payment :{
-      type:Object,
-      required:true
-    }
-
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 const Checkout = model("Checkout", checkoutModel);

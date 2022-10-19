@@ -10,6 +10,7 @@ class CartService {
       const book = await Book.findById(productId);
       if (!book) throw new Error("Cart item not found");
 
+      if (quantity > book.quantity) throw Error("Product left in stock is 5");
       // Check if item already exist in cart
       const cartExists = await Cart.findOne({ bookId: productId });
       if (cartExists) {
@@ -35,7 +36,9 @@ class CartService {
 
   getCartItems = async (userId) => {
     try {
-      return await Cart.find({ userId });
+      return await Cart.find({ userId })
+        .populate("bookId", "title")
+        .select("-userId");
     } catch (error) {
       throw new Error(error.message);
     }
@@ -47,7 +50,9 @@ class CartService {
     try {
       await Cart.findOneAndDelete({ _id: cartId, userId });
 
-      const cartItems = await Cart.find({ userId });
+      const cartItems = await Cart.find({ userId })
+        .populate("bookId", "title")
+        .select("-userId");
       return cartItems;
     } catch (error) {
       throw new Error(error.message);
@@ -56,36 +61,46 @@ class CartService {
 
   clearCart = async (userId) => {
     try {
-      await Cart.deleteMany({ userId:userId });
+      await Cart.deleteMany({ userId: userId });
       return await Cart.find({ userId });
     } catch (error) {
       throw new Error(error.message);
     }
   };
 
-  updateCartItem = async (userId) => {
+
+  checkoutCart = async (body, userId) => {
+    const { price } = body;
+    const orderId = Date.now();
+    let newCheckout;
     try {
+      const cart = await Cart.find({ userId });
+
+      // check if user has checkout before
+      const checkout = await Checkout.findOne({
+        userId,
+        cartId: cart._id,
+      })
+    
+      if (checkout) {
+        checkout.products = [...checkout.products, ...cart];
+        newCheckout = await checkout.save();
+      } else {
+        newCheckout = await Checkout.create({
+          userId,
+          products: cart,
+          price,
+          orderId,
+        })
+      }
+      if (newCheckout) await Cart.deleteMany({ userId });
+      return true;
     } catch (error) {
       throw new Error(error.message);
     }
   };
-
-  checkoutCart = async (body, userId) => {
-    const {products, shipping, payment} = body;
-    const orderId = Date.now()
-    try {
-      const checkout = await Checkout.create({
-        userId,
-        products,
-        shipping,
-        payment,
-        orderId
-
-      });
-      return { checkout };
-    } catch (error) {
-      throw new Error(error.message);
-    }
+  getCheckoutItems = async (userId) => {
+    return await Checkout.findOne({ userId });
   };
 }
 

@@ -4,6 +4,8 @@ import { Router } from "express";
 import isAdminMiddleware from "../../middleware/isAdminMiddleware.js";
 import authenticatedMiddleware from "../../middleware/authenticatedMiddleware.js";
 import { bookValidationMiddleware, bookSchema } from "./validation.js";
+import upload from "../../middleware/imageUploadMiddleware.js";
+import sharp from "sharp";
 class BookController {
   constructor() {
     this.subRoute = "books";
@@ -14,7 +16,7 @@ class BookController {
       DELETE: "/delete/:id",
       DELETE_ALL: "/all",
       UPDATE: "/update/:id",
-      SEARCH : "/search"
+      SEARCH: "/search",
     };
     this.router = new Router();
     this.initializeRoutes();
@@ -26,6 +28,7 @@ class BookController {
       authenticatedMiddleware,
       isAdminMiddleware,
       bookValidationMiddleware(bookSchema),
+      // upload.single("image"),
       this.createBook
     );
     this.router.get(
@@ -68,20 +71,25 @@ class BookController {
   createBook = async (req, res, next) => {
     try {
       const { _id: author } = req.user;
+      // buffer = await sharp(req.file.buffer)
+      //   .resize({ width: 400, height: 400 })
+      //   .png()
+      //   .toBuffer();
+        // req.buffer = buffer;
       const book = await this.BookService.createBook(req.body, author);
 
-      res.status(200).json(book);
+      res.status(201).json(book);
     } catch (error) {
       next(new httpException(400, error.message));
     }
   };
-// GET REQUESTS
+  // GET REQUESTS
   getAllBooks = async (req, res, next) => {
     try {
       const { role: userRole, _id: userId } = req.user;
       const books = await this.BookService.getAllBooks(userRole, userId);
 
-      res.status(201).json({ books });
+      res.status(200).json({ books });
     } catch (error) {
       next(new httpException(400, error.message));
     }
@@ -97,7 +105,7 @@ class BookController {
         userId
       );
 
-      res.status(201).json(book);
+      res.status(200).json(book);
     } catch (error) {
       next(new httpException(400, error.message));
     }
@@ -107,33 +115,32 @@ class BookController {
   deleteSingleBook = async (req, res, next) => {
     try {
       const { id: bookId } = req.params;
-      const {  _id: userId } = req.user;
+      const { _id: userId } = req.user;
       const books = await this.BookService.deleteSingleBook(bookId, userId);
 
-      res.status(201).json({ books });
+      res.status(200).json({ books });
     } catch (error) {
       next(new httpException(400, error.message));
     }
   };
   deleteAllBooks = async (req, res, next) => {
     try {
-     
       const { _id: userId } = req.user;
       const books = await this.BookService.deleteAllBooks(userId);
 
-      res.status(201).json({ books });
+      res.status(200).json({ books });
     } catch (error) {
       next(new httpException(400, error.message));
     }
   };
 
   // EDIT REQUESTS
-   // edit book method
-   editBook = async (req, res, next) => {
+  // edit book method
+  editBook = async (req, res, next) => {
     try {
       const { _id: author } = req.user;
-      const {id: bookId} = req.params
-      const book = await this.BookService.editBook(req.body, bookId,author);
+      const { id: bookId } = req.params;
+      const book = await this.BookService.editBook(req.body, bookId, author);
 
       res.status(200).json(book);
     } catch (error) {
@@ -142,17 +149,18 @@ class BookController {
   };
 
   // SEARCH REQUESTS
-  searchBook = async(req, res, next)=>{
+  searchBook = async (req, res, next) => {
     try {
-      const {query} = req.body
-      if(!query || query.length < 1)return next(new httpException(400, "Type a keyword to search for"))
+      const { query } = req.body;
+      if (!query || query.length < 1)
+        return next(new httpException(400, "Type a keyword to search for"));
       const books = await this.BookService.searchBook(query);
 
-      res.status(200).json({books});
+      res.status(200).json({ books });
     } catch (error) {
       next(new httpException(400, error.message));
     }
-  }
+  };
 }
 
 export default BookController;

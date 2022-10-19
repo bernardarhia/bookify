@@ -22,6 +22,9 @@ const bookModel = new Schema(
       required: true,
       ref: "User",
     },
+    image:{
+      type:Buffer
+    }
   },
   { timestamps: true }
 );
